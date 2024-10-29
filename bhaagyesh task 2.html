@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guessing Game with Confetti</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to bottom right, #8EC5FC, #E0C3FC);
+            color: #333;
+        }
+
+        h1 {
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        input {
+            margin: 10px;
+            padding: 10px;
+            font-size: 1em;
+            width: 300px; /* Increased width for landscape style */
+            border: 2px solid #333;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1.1em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px; /* Adjust spacing between input and button */
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            color: white;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Confetti container */
+        .confetti {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #fff;
+            opacity: 0.7;
+            animation: fall 4s infinite ease-in-out;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100%) rotate(0); }
+            100% { transform: translateY(100vh) rotate(720deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Guess the Number!</h1>
+    <p>I'm thinking of a number between 1 and 100. Can you guess it?</p>
+
+    <div class="input-container">
+        <input type="number" id="guessInput" placeholder="Enter your guess" min="1" max="100">
+        <button onclick="checkGuess()">Submit Guess</button>
+    </div>
+
+    <div class="result" id="result"></div>
+
+    <!-- Confetti container -->
+    <div class="confetti" id="confetti"></div>
+
+    <script>
+        let randomNumber = Math.floor(Math.random() * 100) + 1;
+        let attempts = 0;
+
+        function createConfetti() {
+            const confettiContainer = document.getElementById('confetti');
+            confettiContainer.innerHTML = '';  // Clear any existing confetti
+
+            for (let i = 0; i < 100; i++) {
+                const confettiPiece = document.createElement('div');
+                confettiPiece.classList.add('confetti-piece');
+                confettiPiece.style.left = Math.random() * 100 + 'vw';
+                confettiPiece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;  // Random colors
+                confettiContainer.appendChild(confettiPiece);
+            }
+
+            setTimeout(() => {
+                confettiContainer.innerHTML = '';  // Remove confetti after 4 seconds
+            }, 4000);
+        }
+
+        function checkGuess() {
+            const userGuess = parseInt(document.getElementById('guessInput').value);
+            attempts++;
+            let feedback = '';
+
+            if (userGuess < randomNumber) {
+                feedback = `Too low! Try again.`;
+            } else if (userGuess > randomNumber) {
+                feedback = `Too high! Try again.`;
+            } else {
+                feedback = `Congratulations! You guessed the number ${randomNumber} in ${attempts} attempts.`;
+                // Reset the game after correct guess
+                randomNumber = Math.floor(Math.random() * 100) + 1;
+                attempts = 0;
+
+                // Trigger confetti
+                createConfetti();
+            }
+
+            document.getElementById('result').innerHTML = feedback;
+            document.getElementById('guessInput').value = '';
+        }
+    </script>
+</body>
+</html>
